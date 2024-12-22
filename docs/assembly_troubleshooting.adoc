@@ -1,0 +1,12 @@
+:_content-type: ASSEMBLY
+
+[id="troubleshooting"]
+= Troubleshooting
+
+:context: troubleshooting
+
+You might run into the following problems if you organize your chapters into subsections.
+
+include::modules/proc_ticket-missing-in-subsection.adoc[leveloffset=+1]
+
+include::modules/proc_chapter-missing-in-build.adoc[leveloffset=+1]

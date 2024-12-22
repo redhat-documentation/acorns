@@ -1,0 +1,32 @@
+:_content-type: PROCEDURE
+
+[id="ticket-missing-in-subsection_{context}"]
+= Ticket does not appear in subsection
+
+If you created subsections in the `templates.yaml` file and a ticket does not appear in the builds, the most common reason is that the ticket does not match the filter.
+For example, the *Component* field of the ticket might not match the component filter of the subsection.
+
+. Check the ticket to ensure that the value of the *Component* field is correct, for example, `FIPS`.
+. In your repository, check the filter of the subsection in the `acorns/templates.yaml` file:
++
+[source,text]
+----
+  - &security
+    title: "Security and authentication"
+    filter
+      component: ['Security','SCAP Plugin']
+----
+
+. Add the ticket component to the subsection filter:
++
+[source,text]
+----
+      component: ['Security','SCAP Plugin','FIPS']
+----
++
+Alternatively, add a component override to the ticket in the `acorns/tickets.yaml` file:
++
+[source,text]
+----
+  - [Jira, key: PROJECT-12345, { overrides: {components: ['Security']} }]
+----

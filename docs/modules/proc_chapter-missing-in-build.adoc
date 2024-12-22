@@ -1,0 +1,23 @@
+:_content-type: PROCEDURE
+
+[id="chapter-missing-in-build_{context}"]
+= Chapter does not appear in build
+
+The following error message in an aCoRNs build indicates that the file for a chapter was not generated:
+
+[source,text]
+----
+Unresolved directive in master-template.adoc - include::acorns/generated/internal/assembly_deprecated-functionality.adoc[leveloffset=+1]
+----
+
+aCoRNs generates either an assembly or a reference module for a chapter, depending on the structure:
+
+* If a chapter contains subsections, aCoRNs generates an assembly:
++
+`acorns/generated/internal/assembly_deprecated-functionality.adoc`.
+
+* If a chapter contains no subsections, aCoRNs generates a reference module:
++
+`acorns/generated/internal/ref_deprecated-functionality.adoc`.
+
+If you change a section from _no subsections_ to _subsections_ or vice versa, you must manually update the `master-template.adoc` file so that the included file is correct.
