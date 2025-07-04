@@ -1,5 +1,9 @@
 # Changes
 
+## Version 1.0.2
+
+* The subsystem field for Jira can now also handle if a single object is returned from Jira. This is required because the PoolTeam field (array) will be replaced with AssignedTeam (single-value).
+
 ## Version 0.32.0
 
 * Enable Team as an alternative Subsystems field structure (RHELDOCS-17810). The field structure is:
