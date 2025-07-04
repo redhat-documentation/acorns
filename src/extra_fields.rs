@@ -426,7 +426,9 @@ struct Team {
 #[serde(untagged)]
 enum Subsystems {
     Strings(Vec<TextEntry>),
+    String(TextEntry),
     Team(Team),
+    Teams(Vec<Team>),
 }
 
 impl ExtraFields for Issue {
@@ -574,9 +576,18 @@ impl ExtraFields for Issue {
                         let sst_names = values.into_iter().map(|sst| sst.value).collect();
                         return Ok(sst_names);
                     }
+                    // When it's a single SST name:
+                    Ok(Subsystems::String(value)) => {
+                        return Ok(vec![value.value]);
+                    }
                     // When the SSTs field is a a Team entry:
                     Ok(Subsystems::Team(team)) => {
                         let sst_names = vec![team.name];
+                        return Ok(sst_names);
+                    }
+                    // When it is a list of teams
+                    Ok(Subsystems::Teams(teams)) => {
+                        let sst_names = teams.into_iter().map(|team| team.name).collect();
                         return Ok(sst_names);
                     }
                     Err(error) => {
