@@ -30,7 +30,7 @@ jobs:
     container: asciidoctor/docker-asciidoctor
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # The asciidoctor container is built on Alpine and contains only a Busybox tar.
       # Github Actions need GNU tar for its options.
       - name: Install tar
@@ -38,12 +38,12 @@ jobs:
       - name: Build documentation
         run: asciidoctor --safe -vn docs/main.adoc --out-file=docs/index.html
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload the generated HTML file
           path: 'docs'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
