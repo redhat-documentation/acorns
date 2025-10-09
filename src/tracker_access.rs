@@ -43,6 +43,12 @@ const BZ_API_KEY_VAR: &str = "BZ_API_KEY";
 /// The environment variable that holds the API key to Jira.
 const JIRA_API_KEY_VAR: &str = "JIRA_API_KEY";
 
+/// The environment variable that holds the user email for Jira Cloud basic auth.
+const JIRA_USER_EMAIL_VAR: &str = "JIRA_USER_EMAIL";
+
+/// The environment variable to signal connection to an Atlassian Cloud instance.
+const JIRA_ATLASSIAN_CLOUD_VAR: &str = "JIRA_ATLASSIAN_CLOUD";
+
 #[derive(Clone)]
 pub struct AnnotatedTicket {
     pub ticket: AbstractTicket,
@@ -96,8 +102,33 @@ fn jira_instance(trackers: &tracker::Config) -> Result<jira_query::JiraInstance>
             .wrap_err_with(|| format!("Set the {JIRA_API_KEY_VAR} environment variable."))?
     };
 
-    Ok(jira_query::JiraInstance::at(trackers.jira.host.clone())?
-        .authenticate(jira_query::Auth::ApiKey(api_key))
+    let is_cloud = std::env::var(JIRA_ATLASSIAN_CLOUD_VAR).unwrap_or_default() == "true";
+
+    // Start building the Jira instance.
+    let mut builder = jira_query::JiraInstance::at(trackers.jira.host.clone())?;
+
+    let auth = if is_cloud {
+        builder = builder.for_cloud();
+        log::debug!("Configuring for Atlassian Cloud");
+
+        let user_email = std::env::var(JIRA_USER_EMAIL_VAR).wrap_err_with(|| {
+            format!(
+                "Set the {JIRA_USER_EMAIL_VAR} environment variable for Atlassian Cloud."
+            )
+        })?;
+
+        jira_query::Auth::Basic {
+            user: user_email,
+            password: api_key,
+        }
+    } else {
+        log::debug!("Configuring for local Jira Server.");
+        jira_query::Auth::ApiKey(api_key)
+    };
+
+    // Use the builder to finalize the instance.
+    Ok(builder
+        .authenticate(auth)
         .paginate(jira_query::Pagination::ChunkSize(JIRA_CHUNK_SIZE)))
 }
 
