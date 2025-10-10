@@ -1,5 +1,9 @@
 # Changes
 
+## Version 1.1.0
+
+* Acorns can now also be used with the Atlassian Cloud if you set the `JIRA_ATLASSIAN_CLOUD` environment variable to `true`. For compatibility reasons, if the variable does not exist, Acorns continues to use the API calls for an on-premise Jira instance.
+
 ## Version 1.0.2
 
 * The subsystem field for Jira can now also handle if a single object is returned from Jira. This is required because the PoolTeam field (array) will be replaced with AssignedTeam (single-value).
