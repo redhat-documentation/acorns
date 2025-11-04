@@ -586,7 +586,7 @@ fn extract_number(caps: &regex::Captures, index: usize) -> Option<u32> {
 }
 
 /// List the most common release set in the tickets.
-fn most_common_release(tickets: &[AbstractTicket]) -> Option<Version> {
+fn most_common_release(tickets: &[AbstractTicket]) -> Option<Version<'_>> {
     let mut releases: Counter<Version> = Counter::new();
 
     // Releases are a list, and each ticket can have several of them.
