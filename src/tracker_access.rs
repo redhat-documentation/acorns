@@ -385,7 +385,8 @@ async fn issues(
 
     let mut all_issues = Vec::new();
 
-    let issues_from_ids = issues_from_ids(&queries_by_id, &jira_instance);
+    let jira_host = &trackers.jira.host;
+    let issues_from_ids = issues_from_ids(&queries_by_id, &jira_instance, jira_host);
     let issues_from_searches = issues_from_searches(&queries_by_search, &jira_instance);
 
     let (mut issues_from_ids, mut issues_from_searches) =
@@ -403,14 +404,13 @@ async fn issues(
 async fn issues_from_ids(
     queries: &[(&str, Arc<TicketQuery>)],
     jira_instance: &jira_query::JiraInstance,
+    jira_host: &str,
 ) -> Result<Vec<(Arc<TicketQuery>, Issue)>> {
+    let issue_keys: Vec<&str> = queries.iter().map(|(key, _query)| *key).collect();
+    log::info!("Jira query by IDs: {:?}", issue_keys);
+
     let issues = jira_instance
-        .issues(
-            &queries
-                .iter()
-                .map(|(key, _query)| *key)
-                .collect::<Vec<&str>>(),
-        )
+        .issues(&issue_keys)
         // This enables the download concurrency:
         .await
         .wrap_err("Failed to download tickets from Jira.")?;
@@ -421,9 +421,23 @@ async fn issues_from_ids(
         let matching_query = queries
             .iter()
             .find(|(key, _query)| key == &issue.key.as_str())
-            .map(|(_key, query)| Arc::clone(query))
-            .ok_or_else(|| eyre!("Issue {} doesn't match any configured query.", issue.key))?;
-        annotated_issues.push((matching_query, issue));
+            .map(|(_key, query)| Arc::clone(query));
+
+        if let Some(query) = matching_query {
+            annotated_issues.push((query, issue));
+        } else {
+            // When we can't find a match, it's likely because the ticket was moved to another project
+            // and now has a different ID than what was configured.
+            let ticket_url = format!("{}/browse/{}", jira_host.trim_end_matches('/'), issue.key);
+
+            bail!(
+                "Ticket ID mismatch: Jira returned '{}' ({}) which doesn't match any configured query. \
+                This ticket was likely moved from another project. Check the logs above to see which \
+                ticket IDs were requested, then update your tickets.yaml with the new ID.",
+                issue.key,
+                ticket_url
+            );
+        }
     }
 
     Ok(annotated_issues)
