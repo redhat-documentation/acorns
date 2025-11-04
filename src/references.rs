@@ -36,11 +36,20 @@ impl From<&[Arc<TicketQuery>]> for ReferenceQueries {
 
         // I don't know how to accomplish this in a functional style, unfortunately.
         for query in item {
-            for reference in &query.references {
-                reference_queries.push(Arc::clone(reference));
+            if !query.references.is_empty() {
+                log::info!(
+                    "Query {:?} has {} reference(s)",
+                    query.using,
+                    query.references.len()
+                );
+                for reference in &query.references {
+                    log::info!("  Reference: {:?}", reference.using);
+                    reference_queries.push(Arc::clone(reference));
+                }
             }
         }
 
+        log::info!("Total reference queries extracted: {}", reference_queries.len());
         Self(reference_queries)
     }
 }
