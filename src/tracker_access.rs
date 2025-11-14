@@ -109,7 +109,7 @@ fn jira_instance(trackers: &tracker::Config) -> Result<jira_query::JiraInstance>
 
     let auth = if is_cloud {
         builder = builder.for_cloud();
-        log::debug!("Configuring for Atlassian Cloud");
+        log::info!("Configuring for Atlassian Cloud");
 
         let user_email = std::env::var(JIRA_USER_EMAIL_VAR).wrap_err_with(|| {
             format!(
@@ -122,7 +122,7 @@ fn jira_instance(trackers: &tracker::Config) -> Result<jira_query::JiraInstance>
             password: api_key,
         }
     } else {
-        log::debug!("Configuring for local Jira Server.");
+        log::info!("Configuring for local Jira Server.");
         jira_query::Auth::ApiKey(api_key)
     };
 
