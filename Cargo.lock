@@ -857,8 +857,8 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "jira_query"
-version = "1.7.0"
-source = "git+https://github.com/redhat-documentation/jira_query.git?tag=v1.7.0#5db465f7f380d9ed729d91bb03158bf5f6b94f44"
+version = "1.7.1"
+source = "git+https://github.com/redhat-documentation/jira_query.git?tag=v1.7.1#254911f5b82aebef706b20b13e813ec43c108b1b"
 dependencies = [
  "chrono",
  "log",
