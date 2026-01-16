@@ -1,5 +1,17 @@
 # Changes
 
+## Version 1.1.2
+
+* Add clickable URLs for tickets
+* Print a better message when ticket was moved
+* Log references for tickets that have them
+* Fix compilation warning
+
+## Version 1.1.1
+
+* Update jira_query dependency
+* Update a log level
+
 ## Version 1.1.0
 
 * Acorns can now also be used with the Atlassian Cloud if you set the `JIRA_ATLASSIAN_CLOUD` environment variable to `true`. For compatibility reasons, if the variable does not exist, Acorns continues to use the API calls for an on-premise Jira instance.
