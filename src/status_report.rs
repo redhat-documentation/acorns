@@ -311,34 +311,27 @@ impl Status {
     /// Check that the first line in a release note is a title
     /// in the AsciiDoc label format, and that it matches other title requirements.
     fn from_title(text: &str) -> Self {
-        // Identify the title as a line that starts with a dot (`.`) followed by a character,
-        // and capture everything after the dot for analysis.
-        // Also match if the line starts with spaces and then such a title,
-        // because Jira inserts a space at the start of the doc text,
-        // so make sure to detect that error.
-        let title_regex =
-            Regex::new(r"^ *\.(\S+.*)").expect("Failed to parse a regular expression.");
+        let old_title_regex = Regex::new(r"^ *\.(\S+.*)").expect(REGEX_ERROR);
+        let new_title_regex = Regex::new(r"^ *(\S+.*)::$").expect(REGEX_ERROR);
 
-        let title: Option<&str> = title_regex
-            .captures(text)
-            .and_then(|captures| captures.get(1))
-            .map(|capture| capture.as_str());
-
-        if let Some(title) = title {
-            // Measure the title length in characters, not bytes.
-            let length = title.chars().count();
-
-            // Report leading spaces.
-            if text.starts_with(' ') {
-                Self::Error("Title starts with a space.".into())
-            // Report a long title.
-            } else if length > MAX_TITLE_LENGTH {
-                Self::Warning(format!("Long title: {length} characters."))
-            } else {
-                Self::Ok
-            }
+        let (title, is_legacy) = if let Some(caps) = new_title_regex.captures(text) {
+            (caps.get(1).map(|m| m.as_str()).unwrap_or(""), false)
+        } else if let Some(caps) = old_title_regex.captures(text) {
+            (caps.get(1).map(|m| m.as_str()).unwrap_or(""), true)
         } else {
-            Self::Error("Missing title.".into())
+            return Self::Error("Missing title.".into());
+        };
+
+        let length = title.chars().count();
+
+        if text.starts_with(' ') {
+            Self::Error("Title starts with a space.".into())
+        } else if length > MAX_TITLE_LENGTH {
+            Self::Warning(format!("Long title: {length} characters."))
+        } else if is_legacy {
+            Self::Warning("OK (legacy format)".into())
+        } else {
+            Self::Ok
         }
     }
 

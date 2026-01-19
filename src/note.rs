@@ -45,12 +45,34 @@ impl AbstractTicket {
             // If the doc text contains DOS line endings (`\r`), remove them
             // and keep just UNIX endings (`\n`).
             let doc_text_unix = self.doc_text.replace('\r', "");
+            // If necessary, transform old format to definition list
+            let lines: Vec<&str> = doc_text_unix.lines().collect();
+
+            // Find the first non-empty, non-comment line to check the format
+            let processed_text = if let Some((idx, first_line)) = lines.iter().enumerate().find(|(_, l)| !l.trim().is_empty() && !l.starts_with("//")) {
+                let trimmed = first_line.trim();
+
+                if trimmed.ends_with("::") {
+                    // 1. New Format: Already a definition list, use as is
+                    doc_text_unix
+                } else if trimmed.starts_with('.') {
+                    // 2. Legacy Format: Convert .Title to Title:: and wrap body
+                    let title = &trimmed[1..];
+                    let body = lines[idx+1..].join("\n");
+                    format!("{}::\n+\n--\n{}\n--", title, body.trim())
+                } else {
+                    // 3. Fallback: No title format detected. Use placeholder and wrap everything
+                    format!("<missing_title>::\n+\n--\n{}\n--", doc_text_unix.trim())
+                }
+            } else {
+                doc_text_unix // Should not be reached due to content_lines check above
+            };
 
             // This is the resulting release note:
             format!(
-                "{}\n{}\n\n{} {}",
+                "{}\n{}\n\n+\n{} {}\n",
                 anchor,
-                doc_text_unix,
+                processed_text,
                 self.all_signatures(with_priv_footnote),
                 // In the internal variant, add the debug information line.
                 if variant == DocumentVariant::Internal {
