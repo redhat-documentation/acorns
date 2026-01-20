@@ -377,7 +377,7 @@ pub fn format_document(
     template: &config::Template,
     variant: DocumentVariant,
     with_priv_footnote: bool,
-) -> Vec<Module> {
+) -> (Vec<Module>, HashMap<Rc<TicketId>, u32>) {
     // Prepare a container for ticket usage statistics.
     let mut ticket_stats = HashMap::new();
 
@@ -408,18 +408,12 @@ pub fn format_document(
         .collect();
     log::debug!("Chapters: {:#?}", chapters);
 
-    // A crude way to ensure that the statistics are only printed once, and not twice.
-    // TODO: Revisit, maybe return the value instead.
-    if variant == DocumentVariant::Internal {
-        report_usage_statistics(&ticket_stats);
-    }
-
-    chapters
+    (chapters, ticket_stats)
 }
 
 /// Log statistics about tickets that haven't been used anywhere in the templates,
 /// or have been used more than once. Log both as warnings.
-fn report_usage_statistics(ticket_stats: &HashMap<Rc<TicketId>, u32>) {
+pub fn report_usage_statistics(ticket_stats: &HashMap<Rc<TicketId>, u32>) {
     let unused: Vec<String> = ticket_stats
         .iter()
         .filter(|&(_k, &v)| v == 0)

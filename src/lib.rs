@@ -168,10 +168,35 @@ impl Document {
 
         let (status_table, json_status) = status_report::analyze_status(&abstract_tickets)?;
 
+        let (internal_modules, internal_stats) = templating::format_document(
+            &tickets_for_internal,
+            &project.templates,
+            DocumentVariant::Internal,
+            project.private_footnote,
+        );
+        let (external_modules, external_stats) = templating::format_document(
+            &tickets_for_external,
+            &project.templates,
+            DocumentVariant::External,
+            project.private_footnote,
+        );
+
+        templating::report_usage_statistics(&internal_stats);
+
+        let used_internal: Vec<&AbstractTicket> = tickets_for_internal
+            .into_iter()
+            .filter(|t| internal_stats.get(&t.id).copied().unwrap_or(0) > 0)
+            .collect();
+
+        let used_external: Vec<&AbstractTicket> = tickets_for_external
+            .into_iter()
+            .filter(|t| external_stats.get(&t.id).copied().unwrap_or(0) > 0)
+            .collect();
+
         let internal_summary =
-            summary_list::appendix(&tickets_for_internal, DocumentVariant::Internal)?;
+            summary_list::appendix(&used_internal, DocumentVariant::Internal)?;
         let external_summary =
-            summary_list::appendix(&tickets_for_external, DocumentVariant::External)?;
+            summary_list::appendix(&used_external, DocumentVariant::External)?;
 
         Ok(Self {
             internal_modules,
