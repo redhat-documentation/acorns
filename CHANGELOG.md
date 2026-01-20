@@ -1,5 +1,9 @@
 # Changes
 
+## Version 1.2.0
+* Avoid adding an xref to the table if tickets are unused in the templates (which caused a broken xref)
+* Switch to RN in definition list format, auto-convert RN in old format to definition lists
+
 ## Version 1.1.2
 
 * Add clickable URLs for tickets

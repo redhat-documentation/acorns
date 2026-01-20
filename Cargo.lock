@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "acorns"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "askama",
  "bpaf",
