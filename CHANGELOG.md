@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.2.1
+* Remove duplicate variable assignment to fix a compile error
+* Internal preview: Generate empty RN entry in description list format
+* Add ID to `ref_list-of-tickets-by-component.adoc`
+* Add `_mod-docs-content-type` attribute to generated AsciiDoc files
+
+
 ## Version 1.2.0
 * Avoid adding an xref to the table if tickets are unused in the templates (which caused a broken xref)
 * Switch to RN in definition list format, auto-convert RN in old format to definition lists
