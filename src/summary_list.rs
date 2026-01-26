@@ -146,5 +146,6 @@ pub fn appendix(tickets: &[&AbstractTicket], variant: DocumentVariant) -> Result
     // Render the template as a valid AsciiDoc string.
     template
         .render()
+        .map(|content| format!(":_mod-docs-content-type: REFERENCE\n{content}"))
         .wrap_err("Failed to prepare the ticket appendix.")
 }

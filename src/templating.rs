@@ -211,11 +211,10 @@ impl config::Section {
                 release_notes: &release_notes,
             };
 
-            Some(
-                template
-                    .render()
-                    .expect("Failed to render a reference module template."),
-            )
+            Some(format!(
+                ":_mod-docs-content-type: REFERENCE\n{}",
+                template.render().expect("Failed to render a reference module template.")
+            ))
         }
     }
 
@@ -277,9 +276,10 @@ impl config::Section {
                     includes: &include_statements,
                 };
 
-                let text = template
-                    .render()
-                    .expect("Failed to render an assembly template.");
+                let text = format!(
+                    ":_mod-docs-content-type: ASSEMBLY\n{}",
+                    template.render().expect("Failed to render an assembly template.")
+                );
 
                 Module::WithContent {
                     file_name,
