@@ -34,8 +34,11 @@ impl AbstractTicket {
 
         // A placeholder for release notes with an empty doc text.
         let empty = format!(
-            "{}\n.🚧 {} {} \n\n**No release note.**",
-            anchor, self.summary, debug_info,
+            "{}\n🚧 {}::\n+\n--\n**No release note.**\n--\n+\n{} {}\n",
+            anchor,
+            self.summary,
+            self.all_signatures(with_priv_footnote),
+            &debug_info
         );
 
         // TODO: Handle the empty doc text earlier as an error.
