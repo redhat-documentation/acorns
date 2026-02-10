@@ -218,8 +218,15 @@ impl Document {
             log::debug!("Writing file: {}", out_file.display());
 
             let text = match chapter {
-                Module::WithContent { text, .. } => text,
-                Module::Blank { .. } => "",
+                Module::WithContent { text, .. } => text.clone(),
+                Module::Blank { content_type, title, intro_abstract, module_id, .. } => {
+                    let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
+                    header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
+                    if !intro_abstract.is_empty() {
+                        header.push_str(&format!("\n{}\n", intro_abstract));
+                    }
+                    header
+                }
             };
 
             fs::write(out_file, text).wrap_err("Failed to write generated module.")?;
@@ -242,21 +249,28 @@ impl Document {
     /// Write modules for all sub-sections recursively. Only create files if they have some content.
     fn write_modules(modules: &[Module], generated_dir: &Path) -> Result<()> {
         for module in modules {
-            if let Module::WithContent {
-                file_name,
-                text,
-                included_modules,
-            } = module
-            {
-                let out_file = generated_dir.join(file_name);
+            let (content, sub_modules) = match module {
+                Module::WithContent { text, included_modules, .. } => (Some(text.clone()), included_modules),
+                Module::Blank { content_type, title, intro_abstract, module_id, .. } => {
+                    let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
+                    header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
+                    if !intro_abstract.is_empty() {
+                        header.push_str(&format!("\n{}\n", intro_abstract));
+                    }
+                    (Some(header), &None) // Blank modules have no sub-modules
+                }
+            };
+
+            if let Some(text) = content {
+                let out_file = generated_dir.join(module.file_name());
                 log::debug!("Writing file: {}", out_file.display());
                 fs::write(out_file, text).wrap_err("Failed to write generated module.")?;
+            }
 
-                // If the currently processed module is an assembly,
-                // recursively descend into the assembly and write its included modules.
-                if let Some(included_modules) = included_modules {
-                    Self::write_modules(included_modules, generated_dir)?;
-                }
+            // If the currently processed module is an assembly,
+            // recursively descend into the assembly and write its included modules.
+            if let Some(included_modules) = sub_modules {
+                Self::write_modules(included_modules, generated_dir)?;
             }
         }
 

@@ -69,6 +69,10 @@ pub enum Module {
     /// Its purpose is to create blank assemblies for top-level chapters.
     Blank {
         file_name: String,
+        content_type: &'static str,
+        title: String,
+        intro_abstract: String,
+        module_id: String,
     },
 }
 
@@ -259,9 +263,16 @@ impl config::Section {
                 })
                 .filter(Module::has_content)
                 .collect();
-            // If the assembly receives no modules, because all its modules are empty, return Blank.
+            // If the assembly receives no modules, because all its modules are empty, the file
+            // contains least the content type, title, and abstract.
             if included_modules.is_empty() {
-                Module::Blank { file_name }
+                Module::Blank {
+                    file_name,
+                    content_type: "ASSEMBLY",
+                    title: self.title.clone(),
+                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| s.clone()),
+                    module_id,
+                }
             } else {
                 let include_statements: Vec<String> = included_modules
                     .iter()
@@ -306,7 +317,13 @@ impl config::Section {
                     included_modules: None,
                 }
             } else {
-                Module::Blank { file_name }
+                Module::Blank {
+                    file_name,
+                    content_type: "REFERENCE",
+                    title: self.title.clone(),
+                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| s.clone()),
+                    module_id,
+                }
             }
         }
     }
