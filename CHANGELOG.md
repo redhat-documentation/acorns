@@ -1,5 +1,8 @@
 # Changes
 
+## Version 1.2.2
+* Ensure empty AsciiDoc files contain required metadata
+
 ## Version 1.2.1
 * Remove duplicate variable assignment to fix a compile error
 * Internal preview: Generate empty RN entry in description list format
