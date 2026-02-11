@@ -352,7 +352,7 @@ impl config::Section {
                     // If subsystems resulted in an error, print out some debugging information
                     // before quitting. The ticket ID is especially useful.
                     Err(e) => {
-                        log::error!("Invalid subsystems field in ticket {}.", &ticket.id);
+                        log::error!("Invalid subsystems field in ticket {} ({}).", &ticket.id, &ticket.url);
                         panic!("{}", e);
                     }
                 };
@@ -430,17 +430,31 @@ pub fn format_document(
 
 /// Log statistics about tickets that haven't been used anywhere in the templates,
 /// or have been used more than once. Log both as warnings.
-pub fn report_usage_statistics(ticket_stats: &HashMap<Rc<TicketId>, u32>) {
+pub fn report_usage_statistics(
+    ticket_stats: &HashMap<Rc<TicketId>, u32>,
+    tickets: &[&AbstractTicket],
+) {
+    let url_map: HashMap<&Rc<TicketId>, &str> = tickets
+        .iter()
+        .map(|t| (&t.id, t.url.as_str()))
+        .collect();
+
     let unused: Vec<String> = ticket_stats
         .iter()
         .filter(|&(_k, &v)| v == 0)
-        .map(|(k, _v)| Rc::clone(k).to_string())
+        .map(|(k, _v)| {
+            let url = url_map.get(k).copied().unwrap_or("unknown");
+            format!("{} ({})", k, url)
+        })
         .collect();
 
     let overused: Vec<String> = ticket_stats
         .iter()
         .filter(|&(_k, &v)| v > 1)
-        .map(|(k, _v)| Rc::clone(k).to_string())
+        .map(|(k, _v)| {
+            let url = url_map.get(k).copied().unwrap_or("unknown");
+            format!("{} ({})", k, url)
+        })
         .collect();
 
     if !unused.is_empty() {

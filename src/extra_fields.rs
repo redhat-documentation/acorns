@@ -198,7 +198,7 @@ fn extract_field(field_name: Field, extra: &Value, fields: &[String], id: Id, tr
     // If we at least got an existing but empty field, return an empty string.
     // I think it's safe to treat it as such.
     } else {
-        log::warn!("Fields are empty in {}: {:?}", id, empty_fields);
+        log::warn!("Fields are empty in {} ({}): {:?}", id, id.url(tracker), empty_fields);
         Ok(String::new())
     }
 }
@@ -546,7 +546,7 @@ impl ExtraFields for Issue {
         if !errors.is_empty() {
             let id = Id::Jira(&self.key);
             let report = error_chain(errors, Field::TargetRelease, fields, id, config);
-            log::warn!("The custom target releases failed in {}. Falling back on the standard fix versions field.", id);
+            log::warn!("The custom target releases failed in {} ({}). Falling back on the standard fix versions field.", id, id.url(config));
 
             // Provide this additional information on demand.
             log::debug!("{}", report);

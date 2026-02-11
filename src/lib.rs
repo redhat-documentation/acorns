@@ -168,7 +168,7 @@ impl Document {
             project.private_footnote,
         );
 
-        templating::report_usage_statistics(&internal_stats);
+        templating::report_usage_statistics(&internal_stats, &tickets_for_internal);
 
         let used_internal: Vec<&AbstractTicket> = tickets_for_internal
             .into_iter()
