@@ -94,3 +94,20 @@ The version tag must start with "v" and match the `v.*` regular expression.
 
 Details on configuring the automatic build trigger: TODO.
 
+
+## Packaging and distributing acorns on Crates.io
+
+1. If you are publishing to Crates.io for the first time on this system, log into your account:
+
+    ```
+    $ cargo login
+    ```
+
+    You can manage your login tokens in your account settings: <https://crates.io/me>.
+
+2. Publish the latest version of `acorns` to Crates.io:
+
+    ```
+    $ cargo publish
+    ```
+
