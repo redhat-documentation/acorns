@@ -1,6 +1,7 @@
 [appendix]
 = List of tickets by component
 
+[role="_abstract"]
 Bugzilla and JIRA tickets are listed in this document for reference. The links lead to the release notes in this document that describe the tickets.
 
 [cols="1,2", options="header"]

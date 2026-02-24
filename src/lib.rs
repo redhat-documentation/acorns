@@ -223,6 +223,8 @@ impl Document {
                     let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
                     header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
                     if !intro_abstract.is_empty() {
+                        // Note: The [role="_abstract"] is already prepended in templating.rs,
+                        // so we just ensure proper spacing here.
                         header.push_str(&format!("\n{}\n", intro_abstract));
                     }
                     header
@@ -255,6 +257,8 @@ impl Document {
                     let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
                     header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
                     if !intro_abstract.is_empty() {
+                        // Note: The [role="_abstract"] is already prepended in templating.rs,
+                        // so we just ensure proper spacing here.
                         header.push_str(&format!("\n{}\n", intro_abstract));
                     }
                     (Some(header), &None) // Blank modules have no sub-modules

@@ -207,11 +207,14 @@ impl config::Section {
                 .map(|t| t.release_note(variant, with_priv_footnote))
                 .collect();
 
+            let intro_text = self.intro_abstract.as_ref().map_or(String::new(), |s| {
+                format!("[role=\"_abstract\"]\n{}", s)
+            });
+
             let template = Leaf {
                 id,
                 title: &self.title,
-                // If an introductory abstract is configured for this section, add it below the heading.
-                intro_abstract: self.intro_abstract.as_ref().map_or("", |s| s.as_str()),
+                intro_abstract: &intro_text,
                 release_notes: &release_notes,
             };
 
@@ -270,7 +273,9 @@ impl config::Section {
                     file_name,
                     content_type: "ASSEMBLY",
                     title: self.title.clone(),
-                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| s.clone()),
+                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| {
+                        format!("[role=\"_abstract\"]\n{}", s)
+                    }),
                     module_id,
                 }
             } else {
@@ -279,11 +284,14 @@ impl config::Section {
                     .map(Module::include_statement)
                     .collect();
 
+                let intro_text = self.intro_abstract.as_ref().map_or(String::new(), |s| {
+                    format!("[role=\"_abstract\"]\n{}", s)
+                });
+
                 let template = Assembly {
                     id: &module_id,
                     title: &self.title,
-                    // If an introductory abstract is configured for this section, add it below the heading.
-                    intro_abstract: self.intro_abstract.as_ref().map_or("", |s| s.as_str()),
+                    intro_abstract: &intro_text,
                     includes: &include_statements,
                 };
 
@@ -321,7 +329,9 @@ impl config::Section {
                     file_name,
                     content_type: "REFERENCE",
                     title: self.title.clone(),
-                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| s.clone()),
+                    intro_abstract: self.intro_abstract.as_ref().map_or("".into(), |s| {
+                        format!("[role=\"_abstract\"]\n{}", s)
+                    }),
                     module_id,
                 }
             }
