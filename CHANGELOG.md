@@ -1,5 +1,8 @@
 # Changes
 
+## Version 1.2.3
+* Add [role=_abstract] macro if there is an intro in templates.yaml
+
 ## Version 1.2.2
 * Ensure empty AsciiDoc files contain required metadata
 
