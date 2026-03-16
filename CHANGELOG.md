@@ -1,5 +1,8 @@
 # Changes
 
+## Version 1.2.4
+* Update jira_query dependency (bug fix)
+
 ## Version 1.2.3
 * Add [role=_abstract] macro if there is an intro in templates.yaml
 
