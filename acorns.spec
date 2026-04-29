@@ -1,6 +1,6 @@
 Name: acorns
 Summary: Generate an AsciiDoc release notes document from tracking tickets.
-Version: 1.2.4
+Version: 1.3.0
 Release: 1%{?dist}
 License: GPLv3+
 URL: https://github.com/redhat-documentation/acorns
