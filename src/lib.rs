@@ -219,7 +219,14 @@ impl Document {
 
             let text = match chapter {
                 Module::WithContent { text, .. } => text.clone(),
-                Module::Blank { content_type, title, intro_abstract, module_id, .. } => {
+                Module::Blank {
+                    content_type,
+                    title,
+                    intro_abstract,
+                    module_id,
+                    additional_resources_block,
+                    ..
+                } => {
                     let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
                     header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
                     if !intro_abstract.is_empty() {
@@ -227,6 +234,7 @@ impl Document {
                         // so we just ensure proper spacing here.
                         header.push_str(&format!("\n{}\n", intro_abstract));
                     }
+                    header.push_str(additional_resources_block);
                     header
                 }
             };
@@ -253,7 +261,14 @@ impl Document {
         for module in modules {
             let (content, sub_modules) = match module {
                 Module::WithContent { text, included_modules, .. } => (Some(text.clone()), included_modules),
-                Module::Blank { content_type, title, intro_abstract, module_id, .. } => {
+                Module::Blank {
+                    content_type,
+                    title,
+                    intro_abstract,
+                    module_id,
+                    additional_resources_block,
+                    ..
+                } => {
                     let mut header = format!(":_mod-docs-content-type: {}\n", content_type);
                     header.push_str(&format!("[id=\"{}\"]\n= {}\n", module_id, title));
                     if !intro_abstract.is_empty() {
@@ -261,6 +276,7 @@ impl Document {
                         // so we just ensure proper spacing here.
                         header.push_str(&format!("\n{}\n", intro_abstract));
                     }
+                    header.push_str(additional_resources_block);
                     (Some(header), &None) // Blank modules have no sub-modules
                 }
             };

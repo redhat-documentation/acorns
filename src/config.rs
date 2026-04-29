@@ -369,6 +369,8 @@ pub struct Template {
 pub struct Section {
     pub title: String,
     pub intro_abstract: Option<String>,
+    /// Optional links as `https://example.com[link text]`; rendered as AsciiDoc `link:` macros.
+    pub additional_resources: Option<Vec<String>>,
     pub filter: Filter,
     #[serde(alias = "sections")]
     pub subsections: Option<Vec<Section>>,

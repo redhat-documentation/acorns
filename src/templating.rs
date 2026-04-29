@@ -44,6 +44,7 @@ struct Assembly<'a> {
     title: &'a str,
     intro_abstract: &'a str,
     includes: &'a [String],
+    additional_resources_block: &'a str,
 }
 
 /// The variant of the generated, output document:
@@ -73,6 +74,7 @@ pub enum Module {
         title: String,
         intro_abstract: String,
         module_id: String,
+        additional_resources_block: String,
     },
 }
 
@@ -178,6 +180,21 @@ fn id_fragment(title: &str) -> String {
     title_with_replacements
 }
 
+/// Each entry is `https://host/path[link text]` from templates; output uses AsciiDoc `link:` macros.
+fn format_additional_resources_block(links: Option<&[String]>) -> String {
+    let Some(links) = links else {
+        return String::new();
+    };
+    if links.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from("\n\n[role=\"_additional-resources\"]\n.Additional resources\n\n");
+    for entry in links {
+        out.push_str(&format!("* link:{entry}\n"));
+    }
+    out
+}
+
 impl config::Section {
     /// Convert the body of the section into AsciiDoc text that will serve
     /// as the body of the resulting module.
@@ -277,6 +294,9 @@ impl config::Section {
                         format!("[role=\"_abstract\"]\n{}", s)
                     }),
                     module_id,
+                    additional_resources_block: format_additional_resources_block(
+                        self.additional_resources.as_deref(),
+                    ),
                 }
             } else {
                 let include_statements: Vec<String> = included_modules
@@ -288,11 +308,14 @@ impl config::Section {
                     format!("[role=\"_abstract\"]\n{}", s)
                 });
 
+                let additional_resources_block =
+                    format_additional_resources_block(self.additional_resources.as_deref());
                 let template = Assembly {
                     id: &module_id,
                     title: &self.title,
                     intro_abstract: &intro_text,
                     includes: &include_statements,
+                    additional_resources_block: additional_resources_block.as_str(),
                 };
 
                 let text = format!(
@@ -333,6 +356,7 @@ impl config::Section {
                         format!("[role=\"_abstract\"]\n{}", s)
                     }),
                     module_id,
+                    additional_resources_block: String::new(),
                 }
             }
         }

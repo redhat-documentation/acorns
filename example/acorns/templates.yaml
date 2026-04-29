@@ -1,5 +1,10 @@
 # The `chapters` list defines chapters at the base level of the document.
 # This sample configuration generates chapters for each doc type found in the tickets.
+#
+# Optional on any section that becomes an assembly (`subsections`): append an "Additional resources"
+# block to the generated assembly, for example:
+#   additional_resources:
+#     - "https://example.com[link text]"
 chapters:
 
   # This is the title, or heading, of the chapter.

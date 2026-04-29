@@ -3,6 +3,8 @@
 
 {{ intro_abstract }}
 
+{{ additional_resources_block }}
+
 {% for include in includes %}
 {{ include }}
 {% endfor %}
