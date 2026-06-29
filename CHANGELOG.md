@@ -1,5 +1,8 @@
 # Changes
 
+## Version 1.3.1
+* Update dependencies (mainly because of a fix in query_jira)
+
 ## Version 1.3.0
 * Add template.yaml variable to add an optional "Additional resources" section to assemblies
 
