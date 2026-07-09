@@ -1,5 +1,8 @@
 # Changes
 
+## Version 1.3.2
+* Add authentication validation for Jira to prevent incomplete search results. Acorns exits if authentication fails and returns an error.
+
 ## Version 1.3.1
 * Update dependencies (mainly because of a fix in query_jira)
 

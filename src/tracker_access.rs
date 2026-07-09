@@ -383,6 +383,15 @@ async fn issues(
 
     let jira_instance = jira_instance(trackers)?;
 
+    // Verify authentication before attempting to download tickets.
+    // This prevents incomplete results when security-level tickets are excluded for unauthenticated users.
+    jira_instance
+        .verify_authentication()
+        .await
+        .wrap_err("Jira authentication failed. Unable to proceed because search results would be incomplete without authentication.")?;
+
+    log::info!("Jira authentication verified successfully.");
+
     let mut all_issues = Vec::new();
 
     let jira_host = &trackers.jira.host;
